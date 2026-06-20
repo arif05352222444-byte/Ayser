@@ -1,0 +1,41 @@
+name: APK Olustur
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repoyu al
+        uses: actions/checkout@v4
+
+      - name: Java 17 kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK kur
+        uses: android-actions/setup-android@v3
+
+      - name: ZIP dosyasini ac
+        run: unzip -o LedTvBanner.zip
+
+      - name: Gradle 8.9 indir
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
+          unzip -q gradle-8.9-bin.zip
+
+      - name: APK derle
+        run: |
+          cd LedTvBanner
+          ../gradle-8.9/bin/gradle assembleDebug --no-daemon --stacktrace
+
+      - name: APK yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: LED-TV-Banner-APK
+          path: LedTvBanner/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
